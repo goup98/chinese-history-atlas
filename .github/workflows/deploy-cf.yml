@@ -32,6 +32,9 @@ jobs:
           NEXT_TELEMETRY_DISABLED: "1"
           NEXT_PUBLIC_HISTORY_FIELD_MODE: disabled
 
+      - name: Strip sourcemaps
+        run: find .open-next -name '*.map' -delete -print | wc -l
+
       - name: Deploy
         run: npx wrangler deploy --minify
         env:
