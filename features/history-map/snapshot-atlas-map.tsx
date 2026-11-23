@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import type { Dynasty } from "@/types/history";
 import type { HistoricalMapSnapshot } from "@/types/series";
 import { createSnapshotAtlas } from "./atlas/snapshot-atlas";
+import { useSnapshotGeometry } from "./use-snapshot-geometry";
 
 const MapLibreCanvas = dynamic(() => import("./atlas/maplibre-canvas").then((module) => module.MapLibreCanvas), {
   ssr: false,
@@ -18,7 +19,8 @@ export function SnapshotAtlasMap({ snapshot, dynasties, selectedPolityId, onSele
   selectedPolityId?: string;
   onSelectPolity: (polityId: string) => void;
 }) {
-  const atlas = useMemo(() => createSnapshotAtlas(snapshot, dynasties), [snapshot, dynasties]);
+  const hydrated = useSnapshotGeometry(snapshot) ?? snapshot;
+  const atlas = useMemo(() => createSnapshotAtlas(hydrated, dynasties), [hydrated, dynasties]);
   const [error, setError] = useState<string>();
   const [attempt, setAttempt] = useState(0);
   const [renderedYear, setRenderedYear] = useState<number>();

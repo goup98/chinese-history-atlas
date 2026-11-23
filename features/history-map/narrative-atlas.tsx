@@ -8,6 +8,7 @@ import type { HistoricalMapSnapshot } from "@/types/series";
 import type { MapNarrativeNode, MapNarrativeStep } from "@/types/map-narrative";
 import type { AtlasProjector } from "./atlas/atlas-types";
 import { createSnapshotAtlas } from "./atlas/snapshot-atlas";
+import { useSnapshotGeometry } from "./use-snapshot-geometry";
 import { narrativeFocusBounds, narrativeFrame } from "./narrative-playback";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +27,8 @@ export function NarrativeAtlas({ snapshot, dynasties, step, playing = false, ela
   onSelectNode: (node: MapNarrativeNode) => void;
   onInteract: () => void;
 }) {
-  const atlas = useMemo(() => createSnapshotAtlas(snapshot, dynasties), [snapshot, dynasties]);
+  const hydrated = useSnapshotGeometry(snapshot) ?? snapshot;
+  const atlas = useMemo(() => createSnapshotAtlas(hydrated, dynasties), [hydrated, dynasties]);
   const [projector, setProjector] = useState<AtlasProjector>();
   const [error, setError] = useState<string>();
   const [attempt, setAttempt] = useState(0);
