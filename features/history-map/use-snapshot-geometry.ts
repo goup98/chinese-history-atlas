@@ -31,10 +31,10 @@ export function useSnapshotGeometry(snapshot?: HistoricalMapSnapshot): Historica
             ...region,
             geometry: (payload.regions[region.polityId]?.geometry ?? region.geometry) as typeof region.geometry,
             fillBands: (payload.regions[region.polityId]?.fillBands ?? region.fillBands) as typeof region.fillBands,
-          })) as unknown as HistoricalMapSnapshot["regions"],
+          })),
           outlines: (payload.outlines ?? snapshot.outlines) as HistoricalMapSnapshot["outlines"],
           reconstructedOutlines: (payload.reconstructedOutlines ?? snapshot.reconstructedOutlines) as HistoricalMapSnapshot["reconstructedOutlines"],
-        });
+        } as unknown as HistoricalMapSnapshot);
       })
       .catch(() => { /* 保持空几何，等下一次交互重试 */ });
     return () => { alive = false; };

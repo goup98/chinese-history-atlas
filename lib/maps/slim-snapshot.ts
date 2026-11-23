@@ -12,11 +12,11 @@ export function slimSnapshot(snapshot: HistoricalMapSnapshot): SlimSnapshot {
       ...region,
       geometry: EMPTY_POLYGON,
       fillBands: undefined,
-    })) as unknown as HistoricalMapSnapshot["regions"],
+    })),
     outlines: {},
     reconstructedOutlines: {},
     geometryUrl: `/api/map-geo/${encodeURIComponent(snapshot.id)}`,
-  };
+  } as unknown as SlimSnapshot;
 }
 
 export function isGeometryMissing(snapshot: HistoricalMapSnapshot): boolean {
