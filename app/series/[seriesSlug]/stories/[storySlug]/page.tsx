@@ -1,3 +1,5 @@
+export const revalidate = 3600;
+
 import { notFound } from "next/navigation";
 import { findSeriesBySlug, historySeries } from "@/data/series";
 import { getNarrative } from "@/data/narratives";

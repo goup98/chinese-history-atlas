@@ -1,3 +1,5 @@
+export const revalidate = 3600;
+
 import "@xyflow/react/dist/style.css";
 
 import type { Metadata } from "next";
