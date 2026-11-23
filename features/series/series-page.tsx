@@ -14,6 +14,7 @@ import { HomePageContent } from "@/features/home/home-page-content";
 import { Timeline } from "@/features/timeline/timeline";
 import { HistoricalMap } from "@/features/history-map/historical-map";
 import { PersonExplorer } from "@/features/people/person-explorer";
+import { slimSnapshot } from "@/lib/maps/slim-snapshot";
 
 export type SeriesPageProps = { params: Promise<{ seriesSlug: string }> };
 export type SeriesView = "home" | "timeline" | "map" | "people";
@@ -32,15 +33,16 @@ export async function renderSeriesPage({ params }: SeriesPageProps, view: Series
   const initialPersonId = people.find((person) => person.id === series.featuredPersonId)?.id ?? people[0]?.id;
   const sequences = series.id === "jin-sixteen-kingdoms" ? jinSixteenNarratives : jinNarrativesBySeries[series.id];
   const relatedSequences = series.id === "jin-sixteen-kingdoms" ? jinSixteenRelatedNarratives : [];
-  const narrativeProps = { series, snapshots, dynasties, events, people, sequences, relatedSequences };
+  const clientSnapshots = snapshots.map(slimSnapshot);
+  const narrativeProps = { series, snapshots: clientSnapshots, dynasties, events, people, sequences, relatedSequences };
   const content = series.id === "jin-sixteen-kingdoms" && view === "home"
     ? <JinSixteenHome {...narrativeProps} chapters={jinSixteenChapters} readingPaths={readingPaths} />
     : sequences && view === "map"
     ? <Suspense fallback={<p role="status">正在展开地图推演…</p>}><MapNarrativeExplorer key={series.id} {...narrativeProps} /></Suspense>
     : view === "home"
-    ? <HomePageContent introduction={expansionContent.find((content) => content.config.id === series.id)?.introduction} locations={locations} readingPaths={readingPaths} series={series} snapshots={snapshots} routePrefix={`/series/${series.slug}`} dynasties={dynasties} events={events} people={people} regions={regions} />
+    ? <HomePageContent introduction={expansionContent.find((content) => content.config.id === series.id)?.introduction} locations={locations} readingPaths={readingPaths} series={series} snapshots={clientSnapshots} routePrefix={`/series/${series.slug}`} dynasties={dynasties} events={events} people={people} regions={regions} />
     : view === "timeline" ? <Timeline key={series.id} series={series} events={events} mapYears={snapshots.filter(snapshot => snapshot.status === "ready").map(snapshot => snapshot.year)} />
-    : view === "map" ? <HistoricalMap series={series} snapshots={snapshots} regions={regions} dynasties={dynasties} events={events} locations={locations} />
+    : view === "map" ? <HistoricalMap series={series} snapshots={clientSnapshots} regions={regions} dynasties={dynasties} events={events} locations={locations} />
     : view === "people" && initialPersonId ? <PersonExplorer key={series.id} series={series} initialPersonId={initialPersonId} people={people} dynasties={dynasties} events={events} relations={relations} />
     : <p role="status" className="rounded-2xl border border-dashed border-ink/20 p-8 text-muted">{view === "people" ? "人物资料待核验入库。" : "专题框架准备中，历史内容尚未入库。"}</p>;
   return <>
