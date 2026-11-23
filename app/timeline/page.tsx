@@ -1,5 +1,3 @@
-export const revalidate = 3600;
-
 import type { Metadata } from "next";
 
 import { PageShell } from "@/components/layout/page-shell";
